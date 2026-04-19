@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -16,6 +17,8 @@ app.post("/favorites", (req, res) => {
   res.json({ message: "Added to favorites" });
 });
 
-app.listen(4001, () => {
-  console.log("Favorites service running on port 4001");
+const PORT = process.env.PORT || 4001;
+
+app.listen(PORT, () => {
+  console.log(`Favorites service running on port ${PORT}`);
 });

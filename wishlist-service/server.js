@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -16,6 +17,8 @@ app.post("/wishlist", (req, res) => {
   res.json({ message: "Added to wishlist" });
 });
 
-app.listen(4003, () => {
-  console.log("Wishlist service running on port 4003");
+const PORT = process.env.PORT || 4003;
+
+app.listen(PORT, () => {
+  console.log(`Wishlist service running on port ${PORT}`);
 });

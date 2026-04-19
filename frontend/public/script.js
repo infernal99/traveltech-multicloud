@@ -1,9 +1,9 @@
 let currentCountry = "";
 
-// URLs de servicios (LOCAL)
-const FAVORITES_URL = "http://localhost:4001/favorites";
-const COMMENTS_URL = "http://localhost:4002/comments";
-const WISHLIST_URL = "http://localhost:4003/wishlist";
+// 🔴 CAMBIAR ESTO DESPUÉS DEL DEPLOY
+const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com";
+const COMMENTS_URL = "https://TU-COMMENTS.up.railway.app/comments";
+const WISHLIST_URL = "https://TU-WISHLIST.onrender.com/wishlist";
 
 // =======================
 // SEARCH COUNTRY
@@ -123,7 +123,7 @@ async function loadWishlist() {
 }
 
 // =======================
-// LOAD ALL DATA
+// LOAD
 // =======================
 loadFavorites();
 loadComments();
