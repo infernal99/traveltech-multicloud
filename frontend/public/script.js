@@ -1,9 +1,9 @@
 let currentCountry = null;
 let currentData = null;
 
-const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com";
-const COMMENTS_URL = "https://comments-g84f.onrender.com";
-const WISHLIST_URL = "https://wishlist-bmpw.onrender.com";
+const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com/favorites";
+const COMMENTS_URL = "https://comments-g84f.onrender.com/comments";
+const WISHLIST_URL = "https://wishlist-bmpw.onrender.com/wishlist";
 
 // =======================
 // SEARCH
