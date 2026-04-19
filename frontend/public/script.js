@@ -2,9 +2,9 @@ let currentCountry = null;
 let currentData = null;
 
 // 🔴 CAMBIA ESTO EN PRODUCCIÓN
-const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com/favorites";
-const COMMENTS_URL = "https://comments-g84f.onrender.com/comments";
-const WISHLIST_URL = "https://wishlist-bmpw.onrender.com/wishlist";
+const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com";
+const COMMENTS_URL = "https://comments-g84f.onrender.com";
+const WISHLIST_URL = "https://wishlist-bmpw.onrender.com";
 
 // =======================
 // SEARCH COUNTRY
