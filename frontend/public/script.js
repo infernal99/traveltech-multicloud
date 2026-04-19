@@ -2,7 +2,7 @@ let currentCountry = "";
 
 // 🔴 CAMBIAR ESTO DESPUÉS DEL DEPLOY
 const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com/favorites";
-const COMMENTS_URL = "https://TU-COMMENTS.up.railway.app/comments";
+const COMMENTS_URL = "https://comments-g84f.onrender.com/comments";
 const WISHLIST_URL = "https://wishlist-bmpw.onrender.com/wishlist";
 
 // =======================
