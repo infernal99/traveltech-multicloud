@@ -1,23 +1,20 @@
 let currentCountry = null;
 let currentData = null;
 
+// 🔗 URLs de tus microservicios
 const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com/favorites";
 const COMMENTS_URL = "https://comments-g84f.onrender.com/comments";
 const WISHLIST_URL = "https://wishlist-bmpw.onrender.com/wishlist";
 
 // =======================
-// SEARCH
+// SEARCH COUNTRY
 // =======================
 async function searchCountry() {
   const input = document.getElementById("countryInput").value;
 
-  console.log("Buscando:", input);
-
   try {
     const res = await fetch(`https://restcountries.com/v3.1/name/${input}`);
     const data = await res.json();
-
-    console.log("API respuesta:", data);
 
     const country = data[0];
 
@@ -28,16 +25,25 @@ async function searchCountry() {
       capital: country.capital ? country.capital[0] : "N/A",
       region: country.region,
       population: country.population,
-      flag: country.flags.png
+      flag: country.flags.svg
     };
 
-    document.getElementById("result").innerHTML =
-      `<h3>${currentData.name}</h3>`;
+    // 🔥 MOSTRAR TODOS LOS DATOS
+    document.getElementById("result").innerHTML = `
+      <div style="border:1px solid #ccc; padding:10px; width:300px;">
+        <h2>${currentData.name}</h2>
+        <img src="${currentData.flag}" alt="flag" width="150">
+        <p><strong>Capital:</strong> ${currentData.capital}</p>
+        <p><strong>Región:</strong> ${currentData.region}</p>
+        <p><strong>Población:</strong> ${currentData.population.toLocaleString()}</p>
+      </div>
+    `;
 
     loadComments();
 
   } catch (error) {
     console.error("ERROR SEARCH:", error);
+    alert("Error al buscar el país");
   }
 }
 
@@ -45,25 +51,19 @@ async function searchCountry() {
 // FAVORITES
 // =======================
 async function addFavorite() {
-  console.log("Click favorite");
-
   if (!currentData) {
-    console.log("No hay país seleccionado");
+    alert("Busca un país primero");
     return;
   }
 
   try {
-    const res = await fetch(FAVORITES_URL, {
+    await fetch(FAVORITES_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(currentData)
     });
-
-    const data = await res.json();
-
-    console.log("Respuesta favorite:", data);
 
     loadFavorites();
 
@@ -77,19 +77,36 @@ async function loadFavorites() {
     const res = await fetch(FAVORITES_URL);
     const data = await res.json();
 
-    console.log("Favorites:", data);
-
     const list = document.getElementById("favorites");
     list.innerHTML = "";
 
     data.forEach(item => {
       const li = document.createElement("li");
       li.textContent = item.name;
+
+      const btn = document.createElement("button");
+      btn.textContent = "Eliminar";
+      btn.onclick = () => deleteFavorite(item.name);
+
+      li.appendChild(btn);
       list.appendChild(li);
     });
 
   } catch (error) {
     console.error("ERROR LOAD FAVORITES:", error);
+  }
+}
+
+async function deleteFavorite(name) {
+  try {
+    await fetch(`${FAVORITES_URL}/${name}`, {
+      method: "DELETE"
+    });
+
+    loadFavorites();
+
+  } catch (error) {
+    console.error("ERROR DELETE FAVORITE:", error);
   }
 }
 
@@ -99,15 +116,13 @@ async function loadFavorites() {
 async function addComment() {
   const text = document.getElementById("commentInput").value;
 
-  console.log("Añadiendo comentario:", text);
-
   if (!currentCountry || !text) {
-    console.log("Falta info");
+    alert("Escribe un comentario primero");
     return;
   }
 
   try {
-    const res = await fetch(COMMENTS_URL, {
+    await fetch(COMMENTS_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -118,9 +133,7 @@ async function addComment() {
       })
     });
 
-    const data = await res.json();
-
-    console.log("Respuesta comment:", data);
+    document.getElementById("commentInput").value = "";
 
     loadComments();
 
@@ -136,8 +149,6 @@ async function loadComments() {
     const res = await fetch(`${COMMENTS_URL}/${currentCountry}`);
     const data = await res.json();
 
-    console.log("Comments:", data);
-
     const list = document.getElementById("comments");
     list.innerHTML = "";
 
@@ -152,19 +163,32 @@ async function loadComments() {
   }
 }
 
+async function deleteComments() {
+  if (!currentCountry) return;
+
+  try {
+    await fetch(`${COMMENTS_URL}/${currentCountry}`, {
+      method: "DELETE"
+    });
+
+    loadComments();
+
+  } catch (error) {
+    console.error("ERROR DELETE COMMENTS:", error);
+  }
+}
+
 // =======================
 // WISHLIST
 // =======================
 async function addWishlist() {
-  console.log("Click wishlist");
-
   if (!currentData) {
-    console.log("No hay país");
+    alert("Busca un país primero");
     return;
   }
 
   try {
-    const res = await fetch(WISHLIST_URL, {
+    await fetch(WISHLIST_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -173,10 +197,6 @@ async function addWishlist() {
         name: currentData.name
       })
     });
-
-    const data = await res.json();
-
-    console.log("Respuesta wishlist:", data);
 
     loadWishlist();
 
@@ -190,14 +210,18 @@ async function loadWishlist() {
     const res = await fetch(WISHLIST_URL);
     const data = await res.json();
 
-    console.log("Wishlist:", data);
-
     const list = document.getElementById("wishlist");
     list.innerHTML = "";
 
     data.forEach(item => {
       const li = document.createElement("li");
       li.textContent = item.name;
+
+      const btn = document.createElement("button");
+      btn.textContent = "Eliminar";
+      btn.onclick = () => deleteWishlist(item.name);
+
+      li.appendChild(btn);
       list.appendChild(li);
     });
 
@@ -206,6 +230,21 @@ async function loadWishlist() {
   }
 }
 
+async function deleteWishlist(name) {
+  try {
+    await fetch(`${WISHLIST_URL}/${name}`, {
+      method: "DELETE"
+    });
+
+    loadWishlist();
+
+  } catch (error) {
+    console.error("ERROR DELETE WISHLIST:", error);
+  }
+}
+
+// =======================
+// INIT
 // =======================
 loadFavorites();
 loadWishlist();
