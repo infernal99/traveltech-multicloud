@@ -1,20 +1,23 @@
 let currentCountry = null;
 let currentData = null;
 
-// 🔴 CAMBIA ESTO EN PRODUCCIÓN
 const FAVORITES_URL = "https://traveltech-multicloud-x3q3.onrender.com";
 const COMMENTS_URL = "https://comments-g84f.onrender.com";
 const WISHLIST_URL = "https://wishlist-bmpw.onrender.com";
 
 // =======================
-// SEARCH COUNTRY
+// SEARCH
 // =======================
 async function searchCountry() {
   const input = document.getElementById("countryInput").value;
 
+  console.log("Buscando:", input);
+
   try {
     const res = await fetch(`https://restcountries.com/v3.1/name/${input}`);
     const data = await res.json();
+
+    console.log("API respuesta:", data);
 
     const country = data[0];
 
@@ -28,17 +31,13 @@ async function searchCountry() {
       flag: country.flags.png
     };
 
-    document.getElementById("result").innerHTML = `
-      <h3>${currentData.name}</h3>
-      <p>Capital: ${currentData.capital}</p>
-      <p>Region: ${currentData.region}</p>
-      <p>Population: ${currentData.population}</p>
-      <img src="${currentData.flag}" width="100">
-    `;
+    document.getElementById("result").innerHTML =
+      `<h3>${currentData.name}</h3>`;
 
-    loadComments(); // 🔥 cargar comentarios del país
+    loadComments();
+
   } catch (error) {
-    alert("Country not found");
+    console.error("ERROR SEARCH:", error);
   }
 }
 
@@ -46,144 +45,167 @@ async function searchCountry() {
 // FAVORITES
 // =======================
 async function addFavorite() {
-  if (!currentData) return;
+  console.log("Click favorite");
 
-  await fetch(FAVORITES_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(currentData)
-  });
+  if (!currentData) {
+    console.log("No hay país seleccionado");
+    return;
+  }
 
-  loadFavorites();
+  try {
+    const res = await fetch(FAVORITES_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(currentData)
+    });
+
+    const data = await res.json();
+
+    console.log("Respuesta favorite:", data);
+
+    loadFavorites();
+
+  } catch (error) {
+    console.error("ERROR FAVORITE:", error);
+  }
 }
 
 async function loadFavorites() {
-  const res = await fetch(FAVORITES_URL);
-  const data = await res.json();
+  try {
+    const res = await fetch(FAVORITES_URL);
+    const data = await res.json();
 
-  const list = document.getElementById("favorites");
-  list.innerHTML = "";
+    console.log("Favorites:", data);
 
-  data.forEach(item => {
-    const li = document.createElement("li");
-    li.textContent = item.name;
+    const list = document.getElementById("favorites");
+    list.innerHTML = "";
 
-    const btn = document.createElement("button");
-    btn.textContent = "Eliminar";
-    btn.onclick = () => deleteFavorite(item.name);
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item.name;
+      list.appendChild(li);
+    });
 
-    li.appendChild(btn);
-    list.appendChild(li);
-  });
-}
-
-async function deleteFavorite(name) {
-  await fetch(`${FAVORITES_URL}/${name}`, {
-    method: "DELETE"
-  });
-
-  loadFavorites();
+  } catch (error) {
+    console.error("ERROR LOAD FAVORITES:", error);
+  }
 }
 
 // =======================
-// COMMENTS (NUEVO BACKEND)
+// COMMENTS
 // =======================
 async function addComment() {
-  const commentText = document.getElementById("commentInput").value;
+  const text = document.getElementById("commentInput").value;
 
-  if (!currentCountry || !commentText) return;
+  console.log("Añadiendo comentario:", text);
 
-  await fetch(COMMENTS_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      country: currentCountry,
-      comment: commentText
-    })
-  });
+  if (!currentCountry || !text) {
+    console.log("Falta info");
+    return;
+  }
 
-  document.getElementById("commentInput").value = "";
+  try {
+    const res = await fetch(COMMENTS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        country: currentCountry,
+        comment: text
+      })
+    });
 
-  loadComments();
+    const data = await res.json();
+
+    console.log("Respuesta comment:", data);
+
+    loadComments();
+
+  } catch (error) {
+    console.error("ERROR COMMENT:", error);
+  }
 }
 
 async function loadComments() {
   if (!currentCountry) return;
 
-  const res = await fetch(`${COMMENTS_URL}/${currentCountry}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${COMMENTS_URL}/${currentCountry}`);
+    const data = await res.json();
 
-  const list = document.getElementById("comments");
-  list.innerHTML = "";
+    console.log("Comments:", data);
 
-  data.forEach(item => {
-    const li = document.createElement("li");
-    li.textContent = item.comment;
-    list.appendChild(li);
-  });
-}
+    const list = document.getElementById("comments");
+    list.innerHTML = "";
 
-async function deleteComments() {
-  if (!currentCountry) return;
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item.comment;
+      list.appendChild(li);
+    });
 
-  await fetch(`${COMMENTS_URL}/${currentCountry}`, {
-    method: "DELETE"
-  });
-
-  loadComments();
+  } catch (error) {
+    console.error("ERROR LOAD COMMENTS:", error);
+  }
 }
 
 // =======================
 // WISHLIST
 // =======================
 async function addWishlist() {
-  if (!currentData) return;
+  console.log("Click wishlist");
 
-  await fetch(WISHLIST_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name: currentData.name })
-  });
+  if (!currentData) {
+    console.log("No hay país");
+    return;
+  }
 
-  loadWishlist();
+  try {
+    const res = await fetch(WISHLIST_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: currentData.name
+      })
+    });
+
+    const data = await res.json();
+
+    console.log("Respuesta wishlist:", data);
+
+    loadWishlist();
+
+  } catch (error) {
+    console.error("ERROR WISHLIST:", error);
+  }
 }
 
 async function loadWishlist() {
-  const res = await fetch(WISHLIST_URL);
-  const data = await res.json();
+  try {
+    const res = await fetch(WISHLIST_URL);
+    const data = await res.json();
 
-  const list = document.getElementById("wishlist");
-  list.innerHTML = "";
+    console.log("Wishlist:", data);
 
-  data.forEach(item => {
-    const li = document.createElement("li");
-    li.textContent = item.name;
+    const list = document.getElementById("wishlist");
+    list.innerHTML = "";
 
-    const btn = document.createElement("button");
-    btn.textContent = "Eliminar";
-    btn.onclick = () => deleteWishlist(item.name);
+    data.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item.name;
+      list.appendChild(li);
+    });
 
-    li.appendChild(btn);
-    list.appendChild(li);
-  });
+  } catch (error) {
+    console.error("ERROR LOAD WISHLIST:", error);
+  }
 }
 
-async function deleteWishlist(name) {
-  await fetch(`${WISHLIST_URL}/${name}`, {
-    method: "DELETE"
-  });
-
-  loadWishlist();
-}
-
-// =======================
-// LOAD INICIAL
 // =======================
 loadFavorites();
 loadWishlist();
