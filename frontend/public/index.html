@@ -4,6 +4,7 @@
   <title>Travel App</title>
 </head>
 <body>
+
   <h1>Travel Planner</h1>
 
   <input id="countryInput" placeholder="Enter country">
@@ -12,9 +13,24 @@
   <h2>Result:</h2>
   <div id="result"></div>
 
+  <hr>
+
   <h2>Favorites</h2>
   <button onclick="addFavorite()">Add to Favorites</button>
   <ul id="favorites"></ul>
+
+  <hr>
+
+  <h2>Comments</h2>
+  <input id="commentInput" placeholder="Write a comment">
+  <button onclick="addComment()">Add Comment</button>
+  <ul id="comments"></ul>
+
+  <hr>
+
+  <h2>Wishlist</h2>
+  <button onclick="addWishlist()">Add to Wishlist</button>
+  <ul id="wishlist"></ul>
 
   <script src="script.js"></script>
 </body>
