@@ -11,12 +11,23 @@ let comments = [];
 
 // TEST
 app.get("/", (req, res) => {
-  res.json({ message: "Servicio de comentarios en funcionamiento" });
+  res.json({ message: "Servicio de comentarios funcionando correctamente" });
 });
 
-// GET ALL
+// GET ALL COMMENTS
 app.get("/comments", (req, res) => {
   res.json(comments);
+});
+
+// GET COMMENTS BY COUNTRY (MUY IMPORTANTE 🔥)
+app.get("/comments/:country", (req, res) => {
+  const country = req.params.country.toLowerCase();
+
+  const filtered = comments.filter(
+    c => c.country.toLowerCase() === country
+  );
+
+  res.json(filtered);
 });
 
 // ADD COMMENT
@@ -25,12 +36,11 @@ app.post("/comments", (req, res) => {
 
   if (!country || !comment) {
     return res.status(400).json({
-      error: "País y comentario son obligatorios"
+      error: "Debes enviar country y comment"
     });
   }
 
   const newComment = {
-    id: Date.now(),
     country,
     comment
   };
@@ -40,19 +50,25 @@ app.post("/comments", (req, res) => {
   res.status(201).json(newComment);
 });
 
-// DELETE COMMENT
-app.delete("/comments/:id", (req, res) => {
-  const id = parseInt(req.params.id);
+// DELETE ALL COMMENTS OF A COUNTRY
+app.delete("/comments/:country", (req, res) => {
+  const country = req.params.country.toLowerCase();
 
-  const exists = comments.find(c => c.id === id);
+  const exists = comments.some(
+    c => c.country.toLowerCase() === country
+  );
 
   if (!exists) {
-    return res.status(404).json({ error: "Comentario no encontrado" });
+    return res.status(404).json({
+      error: "No hay comentarios para ese país"
+    });
   }
 
-  comments = comments.filter(c => c.id !== id);
+  comments = comments.filter(
+    c => c.country.toLowerCase() !== country
+  );
 
-  res.json({ message: "Comentario eliminado" });
+  res.json({ message: "Comentarios eliminados" });
 });
 
 app.listen(PORT, () => {
