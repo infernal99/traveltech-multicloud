@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest",
+    "lint": "eslint .",
+    "build": "echo \"No build step\""
   },
   "dependencies": {
     "cors": "^2.8.5",
