@@ -26,3 +26,10 @@ jobs:
       - name: Ejecutar tests
         run: npm test
         working-directory: traveltech-multicloud/comments-service
+            - name: Linter
+        run: npm run lint
+        working-directory: traveltech-multicloud/comments-service
+
+      - name: Build
+        run: npm run build
+        working-directory: traveltech-multicloud/comments-service
